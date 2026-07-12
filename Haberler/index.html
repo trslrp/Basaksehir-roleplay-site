@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haberler - Rams Başakşehir</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;900&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div id="pageLoader">
+  <div class="ldr-container">
+    <div class="ldr-dot"></div>
+    <div class="ldr-dot"></div>
+    <div class="ldr-dot"></div>
+    <div class="ldr-dot"></div>
+    <div class="ldr-dot"></div>
+    <div class="ldr-dot"></div>
+    <div class="ldr-dot"></div>
+    <div class="ldr-dot"></div>
+  </div>
+</div>
+
+<div id="bar"></div>
+<div id="sync"><span class="dot"></span> Canlı Sync</div>
+
+<header>
+  <div class="hi">
+    <a class="slogo" href="./">
+      <div class="slogo-img"><img class="app-logo" src="" alt="logo"></div>
+      <div class="slogo-txt">Rams Başakşehir<span>Resmi Blog</span></div>
+    </a>
+    <nav>
+      <a class="on" href="./">Haberler</a>
+      <a href="../Kadro/">Kadro</a>
+      <a href="../Maclar/">Maçlar</a>
+      <a href="../Store/">🛒 Store</a>
+    </nav>
+    <div class="ha">
+      <button id="oBtn" onclick="logout()">Çıkış</button>
+    </div>
+    <button id="hmbtn" onclick="toggleMob()" aria-label="Menü">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div id="mobmenu">
+  <a class="on" href="./">📰 Haberler</a>
+  <a href="../Kadro/">⚽ Kadro</a>
+  <a href="../Maclar/">🏟️ Maçlar</a>
+  <a href="../Store/">🛒 Store</a>
+  <div class="mob-divider"></div>
+  <button id="mobLogoutBtn" onclick="logout();closeMob()">🚪 Çıkış Yap</button>
+</div>
+
+<div class="hero">
+  <div class="hlogo"><img class="app-logo" src="" alt=""></div>
+  <h1>RAMS <span>BAŞAKŞEHIR</span></h1>
+  <p>Resmi Kulüp Blogu</p>
+</div>
+
+<div class="mw">
+  <div class="st">Son Haberler <button class="ab" onclick="openModal('blog')">+ Yazı Ekle</button></div>
+  <div class="bgrid" id="blogGrid"></div>
+</div>
+
+<div class="mbg" id="modalBg" onclick="bgClk(event)">
+  <div class="mbox" id="modalBox"></div>
+</div>
+
+<div class="dbg" id="detBg" onclick="detBgClk(event)">
+  <div class="dbox" id="detBox"></div>
+</div>
+
+<footer class="site-footer">
+  Bu site <strong>discord.gg/trendyolsuperligrp</strong> rol yapma (RP) topluluğu için oluşturulmuştur. Gerçek kulüple resmi bir bağlantısı yoktur.
+</footer>
+
+<script src="../assets/logo.js"></script>
+<script type="module" src="../assets/app.js"></script>
+</body>
+</html>
