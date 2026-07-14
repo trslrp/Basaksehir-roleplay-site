@@ -165,7 +165,22 @@ nav a.on{color:var(--or);border-bottom:2px solid var(--or);border-radius:6px 6px
 footer.site-footer{background:var(--nv);color:rgba(255,255,255,0.45);text-align:center;padding:24px;font-size:13px;margin-top:60px;letter-spacing:1px;}
 footer.site-footer strong{color:var(--or);}
 
-/* SAYFA YÜKLEME ANİMASYONU */
+/* PUAN DURUMU */
+.ptable-wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.06);}
+table.ptable{width:100%;border-collapse:collapse;min-width:640px;background:#fff;}
+table.ptable thead th{background:var(--nv);color:rgba(255,255,255,.7);font-family:'Barlow Condensed';font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:12px 10px;text-align:center;}
+table.ptable thead th:nth-child(2){text-align:left;}
+table.ptable tbody td{padding:10px;text-align:center;font-size:14px;color:var(--nv);border-bottom:1px solid var(--bd);}
+table.ptable tbody tr:last-child td{border-bottom:none;}
+table.ptable tbody tr:hover{background:var(--gr);}
+table.ptable td.pteam{text-align:left;font-weight:700;font-family:'Barlow Condensed';font-size:15px;display:flex;align-items:center;gap:10px;}
+table.ptable td.pteam img{width:26px;height:26px;object-fit:contain;flex-shrink:0;}
+table.ptable td.ppts{font-family:'Bebas Neue';font-size:18px;letter-spacing:1px;color:var(--or);}
+.prank{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;background:#999;}
+.prank.top{background:#2e9e4f;}
+.prank.mid{background:#e2a72e;}
+.prank.bot{background:#d9483d;}
+table.ptable td.padm{white-space:nowrap;}
 #pageLoader{position:fixed;inset:0;background:#fff;z-index:99999;display:flex;align-items:center;justify-content:center;transition:opacity .35s ease,visibility .35s ease;}
 #pageLoader.hide{opacity:0;visibility:hidden;pointer-events:none;}
 .ldr-container{

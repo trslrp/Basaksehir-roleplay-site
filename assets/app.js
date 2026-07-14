@@ -18,7 +18,7 @@ const AU='rams_admin', AP='Basaksehir2024!';
 const ADMIN_KEY='rams_admin_session';
 let isAdmin = localStorage.getItem(ADMIN_KEY)==='1';
 let editId=null, editType=null;
-window._blog=[]; window._kadro=[]; window._mac=[]; window._store=[];
+window._blog=[]; window._kadro=[]; window._mac=[]; window._store=[]; window._puan=[];
 
 /* ---------- LOGO'ları uygula ---------- */
 document.querySelectorAll('.app-logo').forEach(el=>el.src=LOGO);
@@ -59,6 +59,9 @@ onSnapshot(query(collection(db,'mac'),orderBy('createdAt','desc')),s=>{
 onSnapshot(query(collection(db,'store'),orderBy('createdAt','desc')),s=>{
   window._store=s.docs.map(d=>({id:d.id,...d.data()})); renderStore(); flash(); hideLoader();
 });
+onSnapshot(collection(db,'puan'),s=>{
+  window._puan=s.docs.map(d=>({id:d.id,...d.data()})); renderPuan(); flash(); hideLoader();
+});
 
 /* ---------- Hamburger menü ---------- */
 window.toggleMob=function(){document.getElementById('mobmenu')?.classList.toggle('on');}
@@ -94,10 +97,10 @@ function setUI(){
   document.querySelectorAll('.ab').forEach(b=>b.classList.toggle('on',isAdmin));
   const mob=document.getElementById('mobLogoutBtn');
   if(mob) mob.style.display=isAdmin?'block':'none';
-  renderBlog();renderKadro();renderMac();renderStore();
+  renderBlog();renderKadro();renderMac();renderStore();renderPuan();
 }
 setUI();
-if(!document.getElementById('blogGrid') && !document.getElementById('kadroWrap') && !document.getElementById('macList') && !document.getElementById('storeGrid')){
+if(!document.getElementById('blogGrid') && !document.getElementById('kadroWrap') && !document.getElementById('macList') && !document.getElementById('storeGrid') && !document.getElementById('puanBody')){
   hideLoader(); // içerik grid'i olmayan sayfalarda (ör. admin) beklemeye gerek yok
 }
 
@@ -196,6 +199,42 @@ function renderStore(){
   ).join('');
 }
 
+/* ---------- PUAN DURUMU ---------- */
+function renderPuan(){
+  const body=document.getElementById('puanBody');
+  if(!body) return;
+  if(!window._puan.length){
+    body.innerHTML='<tr><td colspan="9"><div class="empty"><div class="ico">🏆</div><p>Henüz puan durumu girilmedi.</p></div></td></tr>';
+    return;
+  }
+  const list=[...window._puan].sort((a,b)=>{
+    const pb=parseInt(b.points)||0, pa=parseInt(a.points)||0;
+    if(pb!==pa) return pb-pa;
+    const fb=(parseInt(b.goalsFor)||0)-(parseInt(b.goalsAgainst)||0);
+    const fa=(parseInt(a.goalsFor)||0)-(parseInt(a.goalsAgainst)||0);
+    return fb-fa;
+  });
+  const n=list.length;
+  body.innerHTML=list.map((t,i)=>{
+    const rank=i+1;
+    const cls = rank<=4 ? 'top' : (rank>n-3 ? 'bot' : 'mid');
+    const gf=parseInt(t.goalsFor)||0, ga=parseInt(t.goalsAgainst)||0;
+    const fark=gf-ga;
+    return '<tr>'+
+      '<td><span class="prank '+cls+'">'+rank+'</span></td>'+
+      '<td class="pteam">'+(t.logo?'<img src="'+t.logo+'">':'')+'<span>'+(t.team||'')+'</span></td>'+
+      '<td>'+(t.played??'')+'</td>'+
+      '<td>'+(t.win??'')+'</td>'+
+      '<td>'+(t.draw??'')+'</td>'+
+      '<td>'+(t.loss??'')+'</td>'+
+      '<td>'+gf+':'+ga+'</td>'+
+      '<td>'+(fark>0?'+':'')+fark+'</td>'+
+      '<td class="ppts">'+(t.points??'')+'</td>'+
+      '<td class="padm">'+adm('puan',t.id)+'</td>'+
+      '</tr>';
+  }).join('');
+}
+
 /* ---------- BLOG DETAY ---------- */
 window.openDet=function(id){
   const b=window._blog.find(x=>x.id===id); if(!b) return;
@@ -266,6 +305,20 @@ window.openModal=function(type,item){
     '<div class="fg"><label>Ürün Foto URL</label><input id="fstore_img" placeholder="https://..." value="'+v('img')+'" oninput="prv(this.value,\'psi\')">'+
     '<img id="psi" src="'+v('img')+'" style="display:'+(v('img')?'block':'none')+';width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-top:8px"></div>'+
     '<button class="sbtn" id="sbtn" onclick="saveItm()">KAYDET</button></div>';
+  } else if(type==='puan'){
+    h=mh(editId?'TAKIM DÜZENLE':'YENİ TAKIM')+
+    '<div class="fg"><label>Takım Adı</label><input id="fteam" value="'+v('team')+'"></div>'+
+    '<div class="fg"><label>Logo URL (opsiyonel)</label><input id="flogo" placeholder="https://..." value="'+v('logo')+'" oninput="prv(this.value,\'ppi\')">'+
+    '<img id="ppi" src="'+v('logo')+'" style="display:'+(v('logo')?'block':'none')+';width:32px;height:32px;object-fit:contain;margin-top:8px"></div>'+
+    '<div class="fr"><div class="fg"><label>Oynanan (O)</label><input type="number" id="fplayed" value="'+v('played')+'"></div>'+
+    '<div class="fg"><label>Puan</label><input type="number" id="fpts" value="'+v('points')+'"></div></div>'+
+    '<div class="fr"><div class="fg"><label>Galibiyet (G)</label><input type="number" id="fwin" value="'+v('win')+'"></div>'+
+    '<div class="fg"><label>Beraberlik (B)</label><input type="number" id="fdraw" value="'+v('draw')+'"></div></div>'+
+    '<div class="fr"><div class="fg"><label>Mağlubiyet (M)</label><input type="number" id="floss" value="'+v('loss')+'"></div>'+
+    '<div class="fg"></div></div>'+
+    '<div class="fr"><div class="fg"><label>Atılan Gol</label><input type="number" id="fgf" value="'+v('goalsFor')+'"></div>'+
+    '<div class="fg"><label>Yenen Gol</label><input type="number" id="fga" value="'+v('goalsAgainst')+'"></div></div>'+
+    '<button class="sbtn" id="sbtn" onclick="saveItm()">KAYDET</button></div>';
   }
   document.getElementById('modalBox').innerHTML=h;
   document.getElementById('modalBg').classList.add('on');
@@ -274,7 +327,7 @@ window.openModal=function(type,item){
 window.closeModal=function(){document.getElementById('modalBg').classList.remove('on');editId=null;editType=null;}
 window.bgClk=function(e){if(e.target===document.getElementById('modalBg')) closeModal();}
 window.editItm=function(type,id){
-  const src=type==='blog'?window._blog:type==='kadro'?window._kadro:type==='mac'?window._mac:window._store;
+  const src=type==='blog'?window._blog:type==='kadro'?window._kadro:type==='mac'?window._mac:type==='store'?window._store:window._puan;
   const item=src.find(x=>x.id===id);
   if(item) openModal(type,item);
 }
@@ -311,6 +364,20 @@ window.saveItm=async function(){
       const imgUrl = typedUrl || existingImg;
       obj={title:gv('ft'),desc:gv('fc'),price:gv('fpr'),createdAt:ts};
       if(imgUrl) obj.img=imgUrl;
+    } else if(editType==='puan'){
+      const logoUrl=gv('flogo')||(editId?(window._puan.find(x=>x.id===editId)?.logo||''):'');
+      obj={
+        team:gv('fteam'),
+        played:parseInt(gv('fplayed'))||0,
+        win:parseInt(gv('fwin'))||0,
+        draw:parseInt(gv('fdraw'))||0,
+        loss:parseInt(gv('floss'))||0,
+        goalsFor:parseInt(gv('fgf'))||0,
+        goalsAgainst:parseInt(gv('fga'))||0,
+        points:parseInt(gv('fpts'))||0,
+        createdAt:ts
+      };
+      if(logoUrl) obj.logo=logoUrl;
     }
     if(editId) await updateDoc(doc(db,editType,editId),obj);
     else await addDoc(collection(db,editType),obj);
